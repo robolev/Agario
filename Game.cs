@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using Microsoft.VisualBasic;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
@@ -11,6 +12,8 @@ namespace Agario
         private Player player;
         private Input input;
         private List<CircleShape> components = new List<CircleShape>();
+        private List<IDrawable> drawables = new();
+        private List<IUpdatable> updatables = new();
 
         public Game()
         {
@@ -24,6 +27,8 @@ namespace Agario
                 Vector2i mousePosition = Mouse.GetPosition(window);
                 player.UpdateMovement(mousePosition, 100f);
             };
+
+            RegisterActor(player, player);
         }
 
         public void Run()
@@ -36,7 +41,7 @@ namespace Agario
 
                 window.DispatchEvents();
 
-                player.Update(deltaTime);
+                Update(deltaTime);
 
                 Render();
 
@@ -44,13 +49,35 @@ namespace Agario
             }
         }
 
+
+        private void RegisterActor(IDrawable? drawable = null, IUpdatable? updatable = null)
+        {
+            if (drawable != null && !drawables.Contains(drawable))
+            {
+                drawables.Add(drawable);
+            }
+
+            if (updatable != null && !updatables.Contains(updatable))
+            {
+                updatables.Add(updatable);
+            }
+        }
+
+        public void Update(float deltaTime)
+        {
+            foreach(var updatable in updatables) 
+            {
+                updatable.Update(deltaTime);
+            }
+        }
+
         public void Render()
         {
             player.Draw(window);
 
-            foreach (CircleShape component in components)
+            foreach (var dravable in drawables)
             {
-                window.Draw(component);
+               dravable.Draw(window);
             }
 
             window.Display();
