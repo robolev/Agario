@@ -3,7 +3,7 @@ using SFML.System;
 
 namespace Agario
 {
-    public class Player
+    public class Player : IDrawable, IUpdatable
     {
         public int Radius { get; private set; } = 10;
 
@@ -17,15 +17,16 @@ namespace Agario
                 Origin = new Vector2f(0, 0),
                 Position = position,
                 FillColor = Color.White
-            };
+                
+            };  
+            circle.OutlineColor = Color.Black;
+            circle.OutlineThickness = 3f;
         }
 
         public void UpdateMovement(Vector2i mousePosition, float speed)
         {
-            Vector2f targetPosition = new Vector2f(mousePosition.X, mousePosition.Y);
-            Vector2f direction = targetPosition - circle.Position;
+            Vector2f direction = Input.GetMouseDirection(mousePosition, circle.Position);
             direction = NormalizeVector(direction);
-
             velocity = direction * speed;
         }
 
@@ -45,9 +46,9 @@ namespace Agario
             return vector;
         }
 
-        public void Draw(RenderWindow window)
+        public void Draw(RenderTarget target)
         {
-            window.Draw(circle);
+            target.Draw(circle);
         }
     }
 }

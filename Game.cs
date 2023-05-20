@@ -9,12 +9,14 @@ namespace Agario
     {
         private RenderWindow window;
         private Player player;
+        private Input input;
         private List<CircleShape> components = new List<CircleShape>();
 
         public Game()
         {
             window = new RenderWindow(new VideoMode(Config.WindowWidth, Config.WindowHeight), "Moving Circle");
             player = new Player(new Vector2f(100f, 100f));
+            input = new Input();
 
             window.Closed += (sender, e) => window.Close();
             window.MouseMoved += (sender, e) =>
