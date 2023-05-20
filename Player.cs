@@ -14,7 +14,7 @@ namespace Agario
         {
             circle = new CircleShape(Radius)
             {
-                Origin = new Vector2f(Radius, Radius),
+                Origin = new Vector2f(0, 0),
                 Position = position,
                 FillColor = Color.White
             };
