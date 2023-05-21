@@ -49,6 +49,7 @@ namespace Agario
                 return;
 
             circle.Radius += mass;
+            circle.Origin = new Vector2f(circle.Radius, circle.Radius);
         } 
     }
 }

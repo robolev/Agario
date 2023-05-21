@@ -14,6 +14,7 @@ namespace Agario
         private Input input;
         private Food food;
         CollisionCheck collisioun;
+        Camera camera;
         private List<IDrawable> drawables = new();
         private List<IUpdatable> updatables = new();
         private List<Player> players = new();
@@ -25,6 +26,7 @@ namespace Agario
         {
             window = new RenderWindow(new VideoMode(Config.WindowWidth, Config.WindowHeight), "Moving Circle");
             player = new Player(new Vector2f(100f, 100f));
+            camera = new Camera(window);
             players.Add(player);
             input = new Input();
             collisioun = new CollisionCheck();
@@ -55,6 +57,8 @@ namespace Agario
 
                 CheckCollisionWithFood();
 
+                camera.Follow(player);
+
                 Render();
 
                 window.Clear(Color.Black);          
@@ -78,7 +82,7 @@ namespace Agario
 
         private void SpawnFood()
         {
-            Vector2f position = new Vector2f(random.Next(0, (int)Config.WindowWidth), random.Next(0, (int)Config.WindowHeight));
+            Vector2f position = new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight));
             Food food = new Food(position);
             RegisterActor(food);
             foodItems.Add(food);
@@ -96,7 +100,7 @@ namespace Agario
                     {
                         drawables.Remove(food);
                         foodItems.RemoveAt(j);
-                        player.PLayerObesity(food.shape.Radius);
+                        player.PLayerObesity(1);
                         j--; 
                     }
                 }
@@ -114,13 +118,13 @@ namespace Agario
 
         public void Render()
         {
-            player.Draw(window);
-
             foreach (var dravable in drawables)
             {
                dravable.Draw(window);
             }
 
+            window.SetView(camera.view);
+    
             window.Display();
         }
     }
