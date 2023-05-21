@@ -1,11 +1,11 @@
-﻿
-
-using SFML.Graphics;
+﻿using SFML.Graphics;
 using SFML.System;
+using System;
+using System.Collections.Generic;
 
 namespace Agario
 {
-    public class CollisiounCheck
+    public class CollisionCheck
     {
         public bool CheckCollision(CircleShape circle1, CircleShape circle2)
         {
@@ -17,11 +17,12 @@ namespace Agario
 
         private float CalculateDistance(Vector2f position1, Vector2f position2)
         {
-            float deltaX = position2.X - position1.X + 2;
-            float deltaY = position2.Y - position1.Y + 2;
+            float deltaX = position2.X - position1.X;
+            float deltaY = position2.Y - position1.Y;
 
             return MathF.Sqrt(deltaX * deltaX + deltaY * deltaY);
         }
 
+       
     }
 }

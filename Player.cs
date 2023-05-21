@@ -8,7 +8,7 @@ namespace Agario
         public int Radius { get; private set; } = 10;
 
         private Vector2f velocity;
-        private CircleShape circle;
+        public CircleShape circle;
 
         public Player(Vector2f position)
         {
@@ -42,5 +42,13 @@ namespace Agario
         {
             target.Draw(circle);
         }
+
+        public void PLayerObesity(float mass)
+        {
+            if (circle.Radius >= Config.MaxRadius)
+                return;
+
+            circle.Radius += mass;
+        } 
     }
 }

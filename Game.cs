@@ -13,10 +13,11 @@ namespace Agario
         private Player player;
         private Input input;
         private Food food;
-        CollisiounCheck collisioun;
+        CollisionCheck collisioun;
         private List<IDrawable> drawables = new();
         private List<IUpdatable> updatables = new();
-        private List<Food> foodItems;
+        private List<Player> players = new();
+        private List<Food> foodItems = new();
         private Random random = new Random();
 
 
@@ -24,10 +25,9 @@ namespace Agario
         {
             window = new RenderWindow(new VideoMode(Config.WindowWidth, Config.WindowHeight), "Moving Circle");
             player = new Player(new Vector2f(100f, 100f));
+            players.Add(player);
             input = new Input();
-            collisioun = new CollisiounCheck();
-
-            foodItems = new List<Food>();
+            collisioun = new CollisionCheck();
 
             window.Closed += (sender, e) => window.Close();
             window.MouseMoved += (sender, e) =>
@@ -52,6 +52,8 @@ namespace Agario
                 Update(deltaTime);
 
                 SpawnFood();
+
+                CheckCollisionWithFood();
 
                 Render();
 
@@ -81,15 +83,26 @@ namespace Agario
             RegisterActor(food);
             foodItems.Add(food);
         }
-        
-        public void CollisiounCheckWhitFood()
-        {
-           foreach(var food in foodItems)
-           {
-            
-           }
 
+        public void CheckCollisionWithFood()
+        {
+            for (int i = 0; i < players.Count; i++)
+            {
+                Player player = players[i];
+                for (int j = 0; j < foodItems.Count; j++)
+                {
+                    Food food = foodItems[j];
+                    if (collisioun.CheckCollision(player.circle, food.shape))
+                    {
+                        drawables.Remove(food);
+                        foodItems.RemoveAt(j);
+                        player.PLayerObesity(food.shape.Radius);
+                        j--; 
+                    }
+                }
+            }
         }
+
 
         public void Update(float deltaTime)
         {

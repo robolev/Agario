@@ -5,7 +5,7 @@ namespace Agario
 {
     public class Food : IDrawable
     {
-        private CircleShape shape;
+        public CircleShape shape;
         private static int radius = 5;
 
         public Food(Vector2f position)
