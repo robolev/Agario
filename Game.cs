@@ -2,6 +2,7 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System;
 
 
 namespace Agario
@@ -11,15 +12,22 @@ namespace Agario
         private RenderWindow window;
         private Player player;
         private Input input;
-        private List<CircleShape> components = new List<CircleShape>();
+        private Food food;
+        CollisiounCheck collisioun;
         private List<IDrawable> drawables = new();
         private List<IUpdatable> updatables = new();
+        private List<Food> foodItems;
+        private Random random = new Random();
+
 
         public Game()
         {
             window = new RenderWindow(new VideoMode(Config.WindowWidth, Config.WindowHeight), "Moving Circle");
             player = new Player(new Vector2f(100f, 100f));
             input = new Input();
+            collisioun = new CollisiounCheck();
+
+            foodItems = new List<Food>();
 
             window.Closed += (sender, e) => window.Close();
             window.MouseMoved += (sender, e) =>
@@ -43,6 +51,8 @@ namespace Agario
 
                 Update(deltaTime);
 
+                SpawnFood();
+
                 Render();
 
                 window.Clear(Color.Black);          
@@ -61,6 +71,24 @@ namespace Agario
             {
                 updatables.Add(updatable);
             }
+        }
+
+
+        private void SpawnFood()
+        {
+            Vector2f position = new Vector2f(random.Next(0, (int)Config.WindowWidth), random.Next(0, (int)Config.WindowHeight));
+            Food food = new Food(position);
+            RegisterActor(food);
+            foodItems.Add(food);
+        }
+        
+        public void CollisiounCheckWhitFood()
+        {
+           foreach(var food in foodItems)
+           {
+            
+           }
+
         }
 
         public void Update(float deltaTime)

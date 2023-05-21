@@ -12,15 +12,7 @@ namespace Agario
 
         public Player(Vector2f position)
         {
-            circle = new CircleShape(Radius)
-            {
-                Origin = new Vector2f(0, 0),
-                Position = position,
-                FillColor = Color.White
-                
-            };  
-            circle.OutlineColor = Color.Black;
-            circle.OutlineThickness = 3f;
+            circle = CircleHelper.CreateCircle(Radius, new Vector2f(0, 0), position, Color.White);
         }
 
         public void UpdateMovement(Vector2i mousePosition, float speed)

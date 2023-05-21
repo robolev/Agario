@@ -17,10 +17,6 @@
             };
         }
 
-        public void Draw(RenderWindow window)
-        {
-            window.Draw(circle);
-        }
     }
 
 }
