@@ -9,6 +9,10 @@ public class Config
     public const float MapHeight = 6000f;
 
     public const float MaxRadius = 200f;
+
+    public const float MaxNumberOfplayers = 40;
+
+    public const float speed = 100;
 }
 
 

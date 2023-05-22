@@ -2,48 +2,38 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using System;
-
 
 namespace Agario
 {
     public class Game
     {
         private RenderWindow window;
-        private Player player;
-        private Input input;
-        private Food food;
-        CollisionCheck collisioun;
-        Camera camera;
-        private List<IDrawable> drawables = new();
-        private List<IUpdatable> updatables = new();
-        private List<Player> players = new();
-        private List<Food> foodItems = new();
+        public Player mainPlayer;
+        private List<IDrawable> drawables = new List<IDrawable>();
+        private List<IUpdatable> updatables = new List<IUpdatable>();
+        private List<Player> players = new List<Player>();
+        private List<Food> foodItems = new List<Food>();
         private Random random = new Random();
-
+        private CollisionCheck collision = new CollisionCheck();
+        private Camera camera;
 
         public Game()
         {
             window = new RenderWindow(new VideoMode(Config.WindowWidth, Config.WindowHeight), "Moving Circle");
-            player = new Player(new Vector2f(100f, 100f));
             camera = new Camera(window);
-            players.Add(player);
-            input = new Input();
-            collisioun = new CollisionCheck();
 
             window.Closed += (sender, e) => window.Close();
-            window.MouseMoved += (sender, e) =>
-            {
-                Vector2i mousePosition = Mouse.GetPosition(window);
-                player.UpdateMovement(mousePosition, 100f);
-            };
-
-            RegisterActor(player, player);
+           // window.MouseMoved += (sender, e) =>
+          //  {
+          //      Vector2i mousePosition = Mouse.GetPosition(window);
+             
+          //  };
         }
 
         public void Run()
         {
             Clock clock = new Clock();
+            SpawningElements();
 
             while (window.IsOpen)
             {
@@ -57,14 +47,11 @@ namespace Agario
 
                 CheckCollisionWithFood();
 
-                camera.Follow(player);
+                camera.Follow(mainPlayer);
 
                 Render();
-
-                window.Clear(Color.Black);          
             }
         }
-
 
         private void RegisterActor(IDrawable? drawable = null, IUpdatable? updatable = null)
         {
@@ -79,7 +66,6 @@ namespace Agario
             }
         }
 
-
         private void SpawnFood()
         {
             Vector2f position = new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight));
@@ -87,30 +73,53 @@ namespace Agario
             RegisterActor(food);
             foodItems.Add(food);
         }
+        public void SpawningElements()
+        {
+            Vector2i mousePosition = Mouse.GetPosition(window);
+            CreatePlayers(new MouseInput(mousePosition , camera));
+
+            for (int i = 0; i < Config.MaxNumberOfplayers; i++)
+            {                
+                CreatePlayers(new BotMovement(new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight))));
+            }
+        }
+
+        public void CreatePlayers(IInput input)
+        {
+            bool isPlayer = input is MouseInput;
+            Player player = new Player(new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight)), input, isPlayer);
+            RegisterActor(player, player);
+            players.Add(player);
+            if (isPlayer)
+            {
+               mainPlayer = player;
+            }
+        }
 
         public void CheckCollisionWithFood()
         {
             for (int i = 0; i < players.Count; i++)
             {
                 Player player = players[i];
+
                 for (int j = 0; j < foodItems.Count; j++)
                 {
                     Food food = foodItems[j];
-                    if (collisioun.CheckCollision(player.circle, food.shape))
+
+                    if (collision.CheckCollision(player.circle, food.shape))
                     {
                         drawables.Remove(food);
                         foodItems.RemoveAt(j);
-                        player.PLayerObesity(1);
-                        j--; 
+                        player.PlayerObesity(1);
+                        j--;
                     }
                 }
             }
         }
 
-
         public void Update(float deltaTime)
         {
-            foreach(var updatable in updatables) 
+            foreach (var updatable in updatables)
             {
                 updatable.Update(deltaTime);
             }
@@ -118,13 +127,15 @@ namespace Agario
 
         public void Render()
         {
-            foreach (var dravable in drawables)
+            window.Clear(Color.Black);
+
+            foreach (var drawable in drawables)
             {
-               dravable.Draw(window);
+                drawable.Draw(window);
             }
 
             window.SetView(camera.view);
-    
+
             window.Display();
         }
     }

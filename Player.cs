@@ -3,27 +3,34 @@ using SFML.System;
 
 namespace Agario
 {
-    public class Player : IDrawable, IUpdatable
+    public class Player : IPlayer
     {
         public int Radius { get; private set; } = 10;
 
         private Vector2f velocity;
-        public CircleShape circle;
 
-        public Player(Vector2f position)
+        public CircleShape circle { get; set; }
+
+        private IInput input;
+
+        public bool bot = true;
+
+        public Player(Vector2f position, IInput input,bool bot = true)
         {
             circle = CircleHelper.CreateCircle(Radius, new Vector2f(0, 0), position, Color.White);
+            this.input = input;
+            this.bot = bot;
         }
 
-        public void UpdateMovement(Vector2i mousePosition, float speed)
+        public void UpdateMovement(float speed)
         {
-            Vector2f direction = Input.GetMouseDirection(mousePosition, circle.Position);
-            direction = NormalizeVector(direction);
-            velocity = direction * speed;
+            Vector2f direction = input.UpdateMovement();
+            velocity = NormalizeVector(direction) * speed;
         }
 
         public void Update(float deltaTime)
         {
+            UpdateMovement(Config.speed);
             circle.Position += velocity * deltaTime;
         }
 
@@ -43,13 +50,13 @@ namespace Agario
             target.Draw(circle);
         }
 
-        public void PLayerObesity(float mass)
+        public void PlayerObesity(float mass)
         {
             if (circle.Radius >= Config.MaxRadius)
                 return;
 
             circle.Radius += mass;
             circle.Origin = new Vector2f(circle.Radius, circle.Radius);
-        } 
+        }
     }
 }
