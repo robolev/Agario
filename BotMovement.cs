@@ -1,4 +1,5 @@
 ﻿using SFML.System;
+using System;
 
 namespace Agario
 {
@@ -10,12 +11,14 @@ namespace Agario
         private Random random = new Random();
         private float changeDirectionDelay = 2f;
         private float currentDelay = 0f;
+        private Vector2f mapSize;
 
         private Clock clock = new Clock();
 
         public BotMovement(Vector2f startPosition)
         {
             position = startPosition;
+            mapSize = new Vector2f(Config.MapWidth,Config.MapHeight);
             clock.Restart();
         }
 
@@ -27,12 +30,7 @@ namespace Agario
 
             if (currentDelay >= changeDirectionDelay)
             {
-                int randomAngle = random.Next(0, 360);
-                float randomAngleRad = MathF.PI * randomAngle / 180f;
-                float directionX = MathF.Cos(randomAngleRad);
-                float directionY = MathF.Sin(randomAngleRad);
-                Vector2f randomDirection = new Vector2f(directionX, directionY);
-
+                Vector2f randomDirection = GetRandomDirection();
                 velocity = NormalizeVector(randomDirection) * speed;
 
                 currentDelay = 0f;
@@ -40,7 +38,20 @@ namespace Agario
 
             position += velocity * deltaTime;
 
+            
+            position.X = Math.Clamp(position.X, 0, mapSize.X);
+            position.Y = Math.Clamp(position.Y, 0, mapSize.Y);
+
             return position;
+        }
+
+        private Vector2f GetRandomDirection()
+        {
+            int randomAngle = random.Next(0, 360);
+            float randomAngleRad = MathF.PI * randomAngle / 180f;
+            float directionX = MathF.Cos(randomAngleRad);
+            float directionY = MathF.Sin(randomAngleRad);
+            return new Vector2f(directionX, directionY);
         }
 
         private Vector2f NormalizeVector(Vector2f vector)

@@ -22,12 +22,11 @@ namespace Agario
             window = new RenderWindow(new VideoMode(Config.WindowWidth, Config.WindowHeight), "Moving Circle");
             camera = new Camera(window);
 
+           
             window.Closed += (sender, e) => window.Close();
-           // window.MouseMoved += (sender, e) =>
-          //  {
-          //      Vector2i mousePosition = Mouse.GetPosition(window);
-             
-          //  };
+            Vector2i mousePosition = Mouse.GetPosition(window);
+            MouseInput mouseInput = new MouseInput(camera, window);
+            CreatePlayers(mouseInput);
         }
 
         public void Run()
@@ -76,7 +75,7 @@ namespace Agario
         public void SpawningElements()
         {
             Vector2i mousePosition = Mouse.GetPosition(window);
-            CreatePlayers(new MouseInput(mousePosition , camera));
+            CreatePlayers(new MouseInput(camera,window));
 
             for (int i = 0; i < Config.MaxNumberOfplayers; i++)
             {                

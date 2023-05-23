@@ -1,9 +1,6 @@
-﻿using SFML.System;
-
-using SFML.Graphics;
+﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using System;
 
 namespace Agario
 {
@@ -11,23 +8,32 @@ namespace Agario
     {
         private Vector2i mousePosition;
         private Camera camera;
+        private RenderWindow window;
 
-        public MouseInput(Vector2i initialMousePosition, Camera camera)
+        public MouseInput(Camera camera, RenderWindow window)
         {
-            mousePosition = initialMousePosition;
             this.camera = camera;
+            this.window = window;
+
+            window.MouseMoved += Window_MouseMoved;
         }
 
-        public void UpdateMousePosition(Vector2i newMousePosition)
+        private void Window_MouseMoved(object? sender, MouseMoveEventArgs e)
         {
-            mousePosition = newMousePosition;
+            UpdateMousePosition(e.X, e.Y);
+        }
+
+        public void UpdateMousePosition(int x, int y)
+        {
+            mousePosition.X = x;
+            mousePosition.Y = y;
         }
 
         public Vector2f UpdateMovement()
         {
-            Vector2f targetPosition = new Vector2f(mousePosition.X, mousePosition.Y);
-            Vector2f playerPosition = camera.view.Center;
-            Vector2f direction = targetPosition - playerPosition;
+            Vector2f targetPosition = camera.view.Center;
+            Vector2f mousePositionInView = window.MapPixelToCoords(mousePosition);
+            Vector2f direction = mousePositionInView - targetPosition;
             return NormalizeVector(direction);
         }
 
@@ -43,3 +49,8 @@ namespace Agario
         }
     }
 }
+
+
+
+
+

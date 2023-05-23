@@ -25,7 +25,8 @@ namespace Agario
         public void UpdateMovement(float speed)
         {
             Vector2f direction = input.UpdateMovement();
-            velocity = NormalizeVector(direction) * speed;
+            direction = NormalizeVector(direction);
+            velocity = direction * speed;
         }
 
         public void Update(float deltaTime)
