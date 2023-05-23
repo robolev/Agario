@@ -7,10 +7,11 @@ namespace Agario
     {
         public CircleShape shape;
         private static int radius = 5;
+        RandomColour randomColour= new RandomColour();
 
         public Food(Vector2f position)
         {
-            shape = CircleHelper.CreateCircle(radius, new Vector2f(radius, radius), position, GetRandomColor());
+            shape = CircleHelper.CreateCircle(radius, new Vector2f(radius, radius), position, randomColour.GetRandomColor());
         }
 
         public void Draw(RenderTarget target)

@@ -15,9 +15,11 @@ namespace Agario
 
         public bool bot = true;
 
+        RandomColour randomColour= new RandomColour();
+
         public Player(Vector2f position, IInput input,bool bot = true)
         {
-            circle = CircleHelper.CreateCircle(Radius, new Vector2f(0, 0), position, Color.White);
+            circle = CircleHelper.CreateCircle(Radius, new Vector2f(0, 0), position, randomColour.GetRandomColor());
             this.input = input;
             this.bot = bot;
         }
