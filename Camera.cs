@@ -19,9 +19,5 @@ namespace Agario
             view.Center = player.circle.Position;
         }
 
-        public void Apply()
-        {
-            target.SetView(view);
-        }
     }
 }

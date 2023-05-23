@@ -2,6 +2,7 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System.Globalization;
 
 namespace Agario
 {
@@ -32,7 +33,7 @@ namespace Agario
         public void Run()
         {
             Clock clock = new Clock();
-            SpawningElements();
+            SpawningPlayers();
 
             while (window.IsOpen)
             {
@@ -45,6 +46,7 @@ namespace Agario
                 SpawnFood();
 
                 CheckCollisionWithFood();
+                CheckingPlayersCollisioun();
 
                 camera.Follow(mainPlayer);
 
@@ -72,7 +74,7 @@ namespace Agario
             RegisterActor(food);
             foodItems.Add(food);
         }
-        public void SpawningElements()
+        public void SpawningPlayers()
         {
             Vector2i mousePosition = Mouse.GetPosition(window);
             CreatePlayers(new MouseInput(camera,window));
@@ -116,6 +118,39 @@ namespace Agario
             }
         }
 
+        private void CheckingPlayersCollisioun()
+        {
+            for (int i = 0; i < players.Count; i++)
+            {
+                Player playerA = players[i];
+
+                for (int j = i + 1; j < players.Count; j++)
+                {
+                    Player playerB = players[j];
+
+                    if (collision.CheckCollision(playerA.circle, playerB.circle))
+                    {                        
+                        if (playerA.circle.Radius > playerB.circle.Radius/2)
+                        {
+                            playerA.PlayerObesity(playerB.circle.Radius);
+                            ExplelPlayer(playerB);
+                            j--;
+                        }
+                        else if (playerB.circle.Radius > playerA.circle.Radius)
+                        {
+                            playerB.PlayerObesity(playerA.circle.Radius/2);
+                            ExplelPlayer(playerA);
+                            break;
+                        }
+                        else
+                        {
+                            
+                        }
+                    }
+                }
+            }
+        }
+
         public void Update(float deltaTime)
         {
             foreach (var updatable in updatables)
@@ -136,6 +171,13 @@ namespace Agario
             window.SetView(camera.view);
 
             window.Display();
+        }
+
+        public void ExplelPlayer(Player player)
+        {
+            players.Remove(player);
+            drawables.Remove(player);
+            updatables.Remove(player);
         }
     }
 }
