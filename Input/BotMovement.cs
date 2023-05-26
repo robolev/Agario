@@ -1,4 +1,5 @@
-﻿using SFML.System;
+﻿using Agario.Core;
+using SFML.System;
 using System;
 
 namespace Agario
@@ -15,6 +16,9 @@ namespace Agario
 
         private Clock clock = new Clock();
 
+        MathHelper mathHelper= new MathHelper();
+
+
         public BotMovement(Vector2f startPosition)
         {
             position = startPosition;
@@ -30,7 +34,7 @@ namespace Agario
 
             if (currentDelay >= changeDirectionDelay)
             {
-                Vector2f randomDirection = GetRandomDirection();
+                Vector2f randomDirection = mathHelper.GetRandomDirection();
                 velocity = NormalizeVector(randomDirection) * speed;
 
                 currentDelay = 0f;
