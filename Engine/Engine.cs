@@ -12,7 +12,6 @@ namespace Agario
         public List<IUpdatable> updatables = new List<IUpdatable>();
 
         public List<Player> players = new List<Player>();
-
         public List<Food> foodItems = new List<Food>();
 
         public Player mainPlayer;
