@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using Agario.Core;
+using SFML.Graphics;
 using SFML.System;
 
 namespace Agario
@@ -17,6 +18,8 @@ namespace Agario
 
         RandomColour randomColour= new RandomColour();
 
+        MathHelper mathHelper  = new MathHelper();
+
         public Player(Vector2f position, IInput input,bool bot = true)
         {
             circle = CircleHelper.CreateCircle(Radius, new Vector2f(0, 0), position, randomColour.GetRandomColor());
@@ -27,7 +30,7 @@ namespace Agario
         public void UpdateMovement(float speed)
         {
             Vector2f direction = input.UpdateMovement();
-            direction = NormalizeVector(direction);
+            direction = mathHelper.NormalizeVector(direction);
             velocity = direction * speed;
         }
 
@@ -35,17 +38,6 @@ namespace Agario
         {
             UpdateMovement(Config.speed);
             circle.Position += velocity * deltaTime;
-        }
-
-        private Vector2f NormalizeVector(Vector2f vector)
-        {
-            float length = (float)Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-            if (length != 0)
-            {
-                vector.X /= length;
-                vector.Y /= length;
-            }
-            return vector;
         }
 
         public void Draw(RenderTarget target)
