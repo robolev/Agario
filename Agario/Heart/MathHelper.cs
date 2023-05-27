@@ -15,16 +15,5 @@ namespace Agario.Core
             float directionY = MathF.Sin(randomAngleRad);
             return new Vector2f(directionX, directionY);
         }
-
-        public Vector2f NormalizeVector(Vector2f vector)
-        {
-            float length = (float)Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-            if (length != 0)
-            {
-                vector.X /= length;
-                vector.Y /= length;
-            }
-            return vector;
-        }
     }
 }
