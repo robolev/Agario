@@ -28,8 +28,6 @@ namespace Agario
 
         KeyBinding keyBinding;
 
-        public bool isControllable = true;
-
         public Player(Vector2f position, IInput input, bool bot = true)
         {
             circle = CircleHelper.CreateCircle(Radius, new Vector2f(0, 0), position, randomColour.GetRandomColor());
@@ -38,7 +36,7 @@ namespace Agario
             {
                 IsPlayer = true;
                 this.IsPlayer = this.input is MouseInput;
-            }
+            }         
 
             keyBinding = new KeyBinding("SoulSwap", new List<Keyboard.Key> { Keyboard.Key.F });
         }
@@ -84,9 +82,6 @@ namespace Agario
 
         public void SoulSwap()
         {
-            if (!isControllable)
-                return;
-
             Player oldplayer = this;
             Player newPlayer = Game.players[random.Next(0, Game.players.Count)];
 
@@ -101,14 +96,11 @@ namespace Agario
             oldplayer.input = new BotMovement(oldplayer.velocity);
             newPlayer.input = new MouseInput(Game.camera, Game.Window);
             Game.mainPlayer = newPlayer;
-
-            oldplayer.isControllable = false;
-            newPlayer.isControllable = true;
         }
 
         public void ProcessEvents()
         {
-            if (keyBinding.IsKeyTriggered(Keyboard.Key.F))
+            if (keyBinding.IsActionTriggered("SoulSwap"))
             {
                 SoulSwap();
             }

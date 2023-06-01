@@ -14,14 +14,18 @@ namespace Agario.Agario.Input
             Keys = keys;
         }
 
-        public bool IsActionTriggered()
+        public bool IsActionTriggered(string action)
         {
-            foreach (Keyboard.Key key in Keys)
+            if (Action == action)
             {
-                if (!Keyboard.IsKeyPressed(key))
-                    return false;
+                foreach (Keyboard.Key key in Keys)
+                {
+                    if (!Keyboard.IsKeyPressed(key))
+                        return false;
+                }
+                return true;
             }
-            return true;
+            return false;
         }
 
         public bool IsKeyTriggered(Keyboard.Key key)
