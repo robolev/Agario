@@ -7,7 +7,7 @@ namespace Agario
     public class MouseInput : IInput
     {
         private Vector2i mousePosition;
-        private Camera camera;
+        public Camera camera;
         private RenderWindow window;
 
         public MouseInput(Camera camera, RenderWindow window)

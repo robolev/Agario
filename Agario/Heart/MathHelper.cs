@@ -1,7 +1,7 @@
 ﻿using SFML.System;
 using System;
 
-namespace Agario.Core
+namespace Agario.Heart
 {
     public class MathHelper
     {

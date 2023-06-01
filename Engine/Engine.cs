@@ -1,25 +1,49 @@
-﻿using Microsoft.VisualBasic;
-using SFML.Graphics;
+﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using Agario.Heart.Game;
+
 
 namespace Agario
 {
-   
     public class Engine
     {
         public List<IDrawable> drawables = new List<IDrawable>();
         public List<IUpdatable> updatables = new List<IUpdatable>();
 
-        public List<Player> players = new List<Player>();
-        public List<Food> foodItems = new List<Food>();
+        public RenderWindow window;
+        public Game game;
 
-        public Player mainPlayer;
+        public Engine()
+        {
+            window = new RenderWindow(new VideoMode(Config.WindowWidth, Config.WindowHeight), "Moving Circle", Styles.Default, new ContextSettings { AntialiasingLevel = 8 });
+            game = new Game(window,this);
+            game.SpawningPlayers();
+            window.Closed += (sender, e) => window.Close();
+        }
 
-        private Random random = new Random();
+        public void Run()
+        {
+            Clock clock = new Clock();
 
-        CollisionCheck collision = new CollisionCheck();
+            while (window.IsOpen)
+            {
+                float deltaTime = clock.Restart().AsSeconds();
 
+                window.DispatchEvents();
+
+                Update(deltaTime);
+
+                game.SpawnFood();
+
+                game.CheckingPlayersCollision();
+                game.CheckCollisionWithFood();
+
+                game.SetCamera();
+
+                Render();
+            }
+        }
 
         public void RegisterActor(IDrawable? drawable = null, IUpdatable? updatable = null)
         {
@@ -33,84 +57,34 @@ namespace Agario
                 updatables.Add(updatable);
             }
         }
-        public void CreatePlayers(IInput input)
-        {
-            bool isPlayer = input is MouseInput;
-            Player player = new Player(new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight)), input, isPlayer);
-            RegisterActor(player, player);
-            players.Add(player);
-            if (isPlayer)
-            {
-                mainPlayer = player;
-            }
-        }
-        public void SpawnFood()
-        {
-            Vector2f position = new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight));
-            Food food = new Food(position);
-            RegisterActor(food);
-            foodItems.Add(food);
-        }      
 
         public void ExplelPlayer(Player player)
         {
-            players.Remove(player);
+            Game.players.Remove(player);
             drawables.Remove(player);
             updatables.Remove(player);
         }
 
-        public void CheckCollisionWithFood()
+        public void Update(float deltaTime)
         {
-            for (int i = 0; i < players.Count; i++)
+            foreach (var updatable in updatables)
             {
-                Player player = players[i];
-
-                for (int j = 0; j < foodItems.Count; j++)
-                {
-                    Food food = foodItems[j];
-
-                    if (collision.CheckCollision(player.circle, food.shape))
-                    {
-                        drawables.Remove(food);
-                        foodItems.RemoveAt(j);
-                        player.PlayerObesity(1);
-                        j--;
-                    }
-                }
+                updatable.Update(deltaTime);
             }
         }
 
-        public void CheckingPlayersCollisioun()
+        public void Render()
         {
-            for (int i = 0; i < players.Count; i++)
+            window.Clear(Color.Black);
+
+            foreach (var drawable in drawables)
             {
-                Player playerA = players[i];
-
-                for (int j = i + 1; j < players.Count; j++)
-                {
-                    Player playerB = players[j];
-
-                    if (collision.CheckCollision(playerA.circle, playerB.circle))
-                    {
-                        if (playerA.circle.Radius > playerB.circle.Radius / 2)
-                        {
-                            playerA.PlayerObesity(playerB.circle.Radius);
-                            ExplelPlayer(playerB);
-                            j--;
-                        }
-                        else if (playerB.circle.Radius > playerA.circle.Radius)
-                        {
-                            playerB.PlayerObesity(playerA.circle.Radius / 2);
-                            ExplelPlayer(playerA);
-                            break;
-                        }
-                        else
-                        {
-
-                        }
-                    }
-                }
+                drawable.Draw(window);
             }
+
+            window.SetView(Game.camera.view);
+
+            window.Display();
         }
     }
 }

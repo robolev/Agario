@@ -1,5 +1,10 @@
 ﻿using SFML.Graphics;
 using SFML.System;
+using Agario.Heart.Game;
+using SFML.Window;
+using Agario.Agario.Input;
+using System;
+using System.Collections.Generic;
 
 namespace Agario
 {
@@ -15,13 +20,27 @@ namespace Agario
 
         public bool bot = true;
 
-        RandomColour randomColour= new RandomColour();
+        public bool IsPlayer = false;
 
-        public Player(Vector2f position, IInput input,bool bot = true)
+        RandomColour randomColour = new RandomColour();
+
+        Random random = new Random();
+
+        KeyBinding keyBinding;
+
+        public bool isControllable = true;
+
+        public Player(Vector2f position, IInput input, bool bot = true)
         {
             circle = CircleHelper.CreateCircle(Radius, new Vector2f(0, 0), position, randomColour.GetRandomColor());
             this.input = input;
-            this.bot = bot;
+            if (!bot)
+            {
+                IsPlayer = true;
+                this.IsPlayer = this.input is MouseInput;
+            }
+
+            keyBinding = new KeyBinding("SoulSwap", new List<Keyboard.Key> { Keyboard.Key.F });
         }
 
         public void UpdateMovement(float speed)
@@ -35,6 +54,7 @@ namespace Agario
         {
             UpdateMovement(Config.speed);
             circle.Position += velocity * deltaTime;
+            ProcessEvents();
         }
 
         private Vector2f NormalizeVector(Vector2f vector)
@@ -60,6 +80,38 @@ namespace Agario
 
             circle.Radius += mass;
             circle.Origin = new Vector2f(circle.Radius, circle.Radius);
+        }
+
+        public void SoulSwap()
+        {
+            if (!isControllable)
+                return;
+
+            Player oldplayer = this;
+            Player newPlayer = Game.players[random.Next(0, Game.players.Count)];
+
+            while (newPlayer == oldplayer)
+            {
+                newPlayer = Game.players[random.Next(0, Game.players.Count)];
+            }
+
+            oldplayer.bot = true;
+            newPlayer.bot = false;
+
+            oldplayer.input = new BotMovement(oldplayer.velocity);
+            newPlayer.input = new MouseInput(Game.camera, Game.Window);
+            Game.mainPlayer = newPlayer;
+
+            oldplayer.isControllable = false;
+            newPlayer.isControllable = true;
+        }
+
+        public void ProcessEvents()
+        {
+            if (keyBinding.IsKeyTriggered(Keyboard.Key.F))
+            {
+                SoulSwap();
+            }
         }
     }
 }
