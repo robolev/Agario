@@ -39,6 +39,7 @@ namespace Agario
             }         
 
             keyBinding = new KeyBinding("SoulSwap", new List<Keyboard.Key> { Keyboard.Key.F });
+            keyBinding.AddKey(Keyboard.Key.F);
         }
 
         public void UpdateMovement(float speed)
