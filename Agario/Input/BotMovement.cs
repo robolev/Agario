@@ -35,7 +35,7 @@ namespace Agario
             if (currentDelay >= changeDirectionDelay)
             {
                 Vector2f randomDirection = mathHelper.GetRandomDirection();
-                velocity = NormalizeVector(randomDirection) * speed;
+                velocity = mathHelper.NormalizeVector(randomDirection) * speed;
 
                 currentDelay = 0f;
             }
@@ -48,25 +48,6 @@ namespace Agario
 
             return position;
         }
-
-        private Vector2f GetRandomDirection()
-        {
-            int randomAngle = random.Next(0, 360);
-            float randomAngleRad = MathF.PI * randomAngle / 180f;
-            float directionX = MathF.Cos(randomAngleRad);
-            float directionY = MathF.Sin(randomAngleRad);
-            return new Vector2f(directionX, directionY);
-        }
-
-        private Vector2f NormalizeVector(Vector2f vector)
-        {
-            float length = (float)Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-            if (length != 0)
-            {
-                vector.X /= length;
-                vector.Y /= length;
-            }
-            return vector;
-        }
+   
     }
 }
