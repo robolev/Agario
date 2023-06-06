@@ -1,5 +1,4 @@
 ﻿using SFML.Window;
-using System.Collections.Generic;
 
 namespace Agario.Agario.Input
 {
@@ -26,21 +25,6 @@ namespace Agario.Agario.Input
                 return true;
             }
             return false;
-        }
-
-        public bool IsKeyTriggered(Keyboard.Key key)
-        {
-            return Keyboard.IsKeyPressed(key);
-        }
-
-        public void AddKey(Keyboard.Key key)
-        {
-            Keys.Add(key);
-        }
-
-        public void RemoveKey(Keyboard.Key key)
-        {
-            Keys.Remove(key);
         }
     }
 }

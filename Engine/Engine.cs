@@ -60,7 +60,7 @@ namespace Agario
 
         public void ExplelPlayer(Player player)
         {
-            Game.players.Remove(player);
+            player.Destroy();
             drawables.Remove(player);
             updatables.Remove(player);
         }

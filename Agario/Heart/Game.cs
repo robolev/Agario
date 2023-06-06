@@ -86,7 +86,7 @@ namespace Agario.Heart.Game;
                 if (collision.CheckCollision(player.circle, food.shape))
                 {
                     engine.drawables.Remove(food);
-                    foodItems.RemoveAt(j);
+                    food.Destroy();
                     player.PlayerObesity(1);
                     j--;
                 }

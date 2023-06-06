@@ -3,12 +3,11 @@ using SFML.System;
 using Agario.Heart.Game;
 using SFML.Window;
 using Agario.Agario.Input;
-using System;
-using System.Collections.Generic;
+using Agario.Agario.Objects.Interfaces;
 
 namespace Agario
 {
-    public class Player : IPlayer
+    public class Player : IPlayer,BaseObject
     {
         public int Radius { get; private set; } = 10;
 
@@ -36,10 +35,14 @@ namespace Agario
             {
                 IsPlayer = true;
                 this.IsPlayer = this.input is MouseInput;
-            }         
+            }
+            else
+            {
+                this.bot = this.input is BotMovement;          
+            }
+
 
             keyBinding = new KeyBinding("SoulSwap", new List<Keyboard.Key> { Keyboard.Key.F });
-            keyBinding.AddKey(Keyboard.Key.F);
         }
 
         public void UpdateMovement(float speed)
@@ -105,6 +108,12 @@ namespace Agario
             {
                 SoulSwap();
             }
+        }
+
+
+        public void Destroy()
+        {
+            Game.players.Remove(this);
         }
     }
 }

@@ -1,9 +1,11 @@
-﻿using SFML.Graphics;
+﻿using Agario.Agario.Objects.Interfaces;
+using Agario.Heart.Game;
+using SFML.Graphics;
 using SFML.System;
 
 namespace Agario
 {
-    public class Food : IDrawable
+    public class Food : IDrawable,BaseObject
     {
         public CircleShape shape;
         private static int radius = 5;
@@ -23,6 +25,11 @@ namespace Agario
         {
             Random random = new Random();
             return new Color((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256));
+        }
+
+        public void Destroy()
+        {
+             Game.foodItems.Remove(this);
         }
     }
 }
