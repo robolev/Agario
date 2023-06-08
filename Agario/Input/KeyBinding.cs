@@ -1,23 +1,28 @@
 ﻿using SFML.Window;
+using System.Collections.Generic;
 
 namespace Agario.Agario.Input
 {
     public class KeyBinding
     {
-        public string Action { get; set; }
-        public List<Keyboard.Key> Keys { get; set; }
+        private Dictionary<string, List<Keyboard.Key>> keyBindings;
 
-        public KeyBinding(string action, List<Keyboard.Key> keys)
+        public KeyBinding()
         {
-            Action = action;
-            Keys = keys;
+            keyBindings = new Dictionary<string, List<Keyboard.Key>>();
+        }
+
+        public void BindAction(string action, List<Keyboard.Key> keys)
+        {
+            keyBindings[action] = keys;
         }
 
         public bool IsActionTriggered(string action)
         {
-            if (Action == action)
+            if (keyBindings.ContainsKey(action))
             {
-                foreach (Keyboard.Key key in Keys)
+                List<Keyboard.Key> keys = keyBindings[action];
+                foreach (Keyboard.Key key in keys)
                 {
                     if (!Keyboard.IsKeyPressed(key))
                         return false;

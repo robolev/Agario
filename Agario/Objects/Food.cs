@@ -20,13 +20,7 @@ namespace Agario
         {
             target.Draw(shape);
         }
-
-        private Color GetRandomColor()
-        {
-            Random random = new Random();
-            return new Color((byte)random.Next(256), (byte)random.Next(256), (byte)random.Next(256));
-        }
-
+        
         public void Destroy()
         {
              Game.foodItems.Remove(this);

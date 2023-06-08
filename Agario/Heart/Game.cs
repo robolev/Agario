@@ -28,12 +28,10 @@ namespace Agario.Heart.Game;
         MouseInput mouseInput = new MouseInput(camera, window);
         CreatePlayers(mouseInput);
     }
-
     public void SetCamera()
     {
         camera.Follow(mainPlayer);
     }
-
     public void SpawnFood()
     {
         Vector2f position = new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight));
@@ -41,7 +39,6 @@ namespace Agario.Heart.Game;
         engine.RegisterActor(food);
         foodItems.Add(food);
     }
-
     public void CheckingPlayersCollision()
     {
         for (int i = 0; i < players.Count; i++)
@@ -72,7 +69,6 @@ namespace Agario.Heart.Game;
             }
         }
     }
-
     public void CheckCollisionWithFood()
     {
         for (int i = 0; i < players.Count; i++)
@@ -93,7 +89,6 @@ namespace Agario.Heart.Game;
             }
         }
     }
-
     public void CreatePlayers(IInput input)
     {
         bool isPlayerControlled = input is MouseInput;
@@ -105,7 +100,6 @@ namespace Agario.Heart.Game;
             mainPlayer = player;
         }
     }
-
     public void SpawningPlayers()
     {
         CreatePlayers(new MouseInput(camera, engine.window));

@@ -10,19 +10,16 @@ namespace Agario
     public class Player : IPlayer,BaseObject
     {
         public int Radius { get; private set; } = 10;
+        public CircleShape circle { get; set; }
 
         private Vector2f velocity;
-
-        public CircleShape circle { get; set; }
 
         private IInput input;
 
         public bool bot = true;
-
         public bool IsPlayer = false;
 
         RandomColour randomColour = new RandomColour();
-
         Random random = new Random();
 
         KeyBinding keyBinding;
@@ -41,8 +38,8 @@ namespace Agario
                 this.bot = this.input is BotMovement;          
             }
 
-
-            keyBinding = new KeyBinding("SoulSwap", new List<Keyboard.Key> { Keyboard.Key.F });
+            keyBinding = new KeyBinding();
+            keyBinding.BindAction("SoulSwap", new List<Keyboard.Key> { Keyboard.Key.F });           
         }
 
         public void UpdateMovement(float speed)
@@ -109,7 +106,6 @@ namespace Agario
                 SoulSwap();
             }
         }
-
 
         public void Destroy()
         {
