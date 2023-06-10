@@ -14,7 +14,8 @@ namespace Agario
 
         private Vector2f velocity;
 
-        private IInput input;
+        private IInput input; 
+        Input Input = new();
 
         public bool bot = true;
         public bool IsPlayer = false;
@@ -22,7 +23,9 @@ namespace Agario
         RandomColour randomColour = new RandomColour();
         Random random = new Random();
 
-        KeyBinding keyBinding;
+        public KeyBinding keyBinding;
+
+
 
         public Player(Vector2f position, IInput input, bool bot = true)
         {
@@ -101,7 +104,7 @@ namespace Agario
 
         public void ProcessEvents()
         {
-            if (keyBinding.IsActionTriggered("SoulSwap"))
+            if (Input.EventPressed("SoulSwap",this))
             {
                 SoulSwap();
             }
