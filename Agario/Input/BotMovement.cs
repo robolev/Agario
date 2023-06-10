@@ -1,52 +1,68 @@
-﻿using Agario.Heart;
+﻿using MathF = System.MathF;
+
+using Agario.Heart;
 using SFML.System;
 using System;
+using Agario.Heart.Game;
+using SFML.Graphics;
+
 
 namespace Agario
 {
     public class BotMovement : IInput
     {
         private Vector2f position;
-        private Vector2f velocity;
-        private float speed = 100f;
-        private Random random = new Random();
-        private float changeDirectionDelay = 2f;
-        private float currentDelay = 0f;
-        private Vector2f mapSize;
-
         private Clock clock = new Clock();
+        
+        private Player bot;
 
-        MathHelper mathHelper= new MathHelper();
-
-
+      
         public BotMovement(Vector2f startPosition)
         {
             position = startPosition;
-            mapSize = new Vector2f(Config.MapWidth,Config.MapHeight);
             clock.Restart();
+        }
+        
+        public void SetControllerPlayer(Player bot)
+        {
+            this.bot = bot;
         }
 
         public Vector2f UpdateMovement()
         {
             float deltaTime = clock.Restart().AsSeconds();
-
-            currentDelay += deltaTime;
-
-            if (currentDelay >= changeDirectionDelay)
-            {
-                Vector2f randomDirection = mathHelper.GetRandomDirection();
-                velocity = mathHelper.NormalizeVector(randomDirection) * speed;
-
-                currentDelay = 0f;
-            }
-
-            position += velocity * deltaTime;
-
             
-            position.X = Math.Clamp(position.X, 0, mapSize.X);
-            position.Y = Math.Clamp(position.Y, 0, mapSize.Y);
+            Vector2f foodPos = GetNearestFood(bot);
 
-            return position;
+            position.X = Math.Clamp(position.X, 0, Config.MapWidth);
+            position.Y = Math.Clamp(position.Y, 0, Config.MapHeight);
+
+            return foodPos;
+        }
+        
+        private Vector2f GetNearestFood(Player from)
+        {
+            Vector2f nearestFood = new Vector2f(0, 0);
+            float nearestFoodDistance = float.MaxValue;
+            
+            foreach (var food in Game.Instance.foodItems)
+            {
+                float distance = Distance(food.shape.Position, from.blob.circle.Position);
+                if (distance < nearestFoodDistance)
+                {
+                    nearestFoodDistance = distance;
+                    nearestFood = food.shape.Position;
+                }
+            }
+            
+            return nearestFood;
+        }
+        
+        public static float Distance(Vector2f vector, Vector2f other)
+        {
+            float vectorX = vector.X - other.X;
+            float vectorY = vector.Y - other.Y;
+            return MathF.Sqrt((vectorX * vectorX) + (vectorY * vectorY));
         }
    
     }

@@ -11,25 +11,26 @@ public class Game
 {
     private Random random = new Random();
 
-    public static Camera camera;
-    public static RenderWindow Window;
+    public  Camera camera;
+    public  RenderWindow Window;
 
-    public static List<Player> players = new List<Player>();
-    public static List<Food> foodItems = new List<Food>();
+    public  List<Player> players = new List<Player>();
+    public  List<Food> foodItems = new List<Food>();
 
     private Engine engine;
     private CollisionCheck collision = new CollisionCheck();
 
-    public static Player mainPlayer;
+    public  Player mainPlayer;
     private Input input;
 
     public Config config;
+    
+    public static Game Instance { get; private set; }
 
     public Game(RenderWindow window, Engine engine)
     {
-        
         this.engine = engine;
-        Window = window;
+        Window = engine.window;
         camera = new Camera(window);
         input = new Input();
 
@@ -41,13 +42,12 @@ public class Game
         fileReader.LoadInformationFromFile();       
 
         Console.WriteLine(config.MaxNumberOfPlayers);
-
-        CreatePlayers(input.GetMouseInput());
+        Instance = this;
     }
 
     public void SetCamera()
     {
-        camera.Follow(mainPlayer);
+        camera.Follow();
     }
 
     public void SpawnFood()
@@ -62,32 +62,27 @@ public class Game
     {
         for (int i = 0; i < players.Count; i++)
         {
-            Player playerA = players[i];
+            Player attacker = players[i];
             for (int j = i + 1; j < players.Count; j++)
             {
-                Player playerB = players[j];
-                if (collision.CheckCollision(playerA.circle, playerB.circle))
+                Player victim = players[j];
+                if (collision.CheckCollision(attacker.blob.circle, victim.blob.circle))
                 {
-                    if (playerA.circle.Radius > playerB.circle.Radius / 2)
+                    if (attacker.CanEat(victim))
                     {
-                        playerA.PlayerObesity(playerB.circle.Radius);
-                        engine.ExplelPlayer(playerB);
+                        attacker.EatPlayer(victim);
                         j--;
-                    }
-                    else if (playerB.circle.Radius > playerA.circle.Radius)
-                    {
-                        playerB.PlayerObesity(playerA.circle.Radius / 2);
-                        engine.ExplelPlayer(playerA);
-                        break;
                     }
                     else
                     {
-                        
+                        victim.EatPlayer(attacker);
+                        break;
                     }
                 }
             }
         }
     }
+    
 
     public void CheckCollisionWithFood()
     {
@@ -99,36 +94,64 @@ public class Game
             {
                 Food food = foodItems[j];
 
-                if (collision.CheckCollision(player.circle, food.shape))
+                if (collision.CheckCollision(player.blob.circle, food.shape))
                 {
                     engine.drawables.Remove(food);
                     food.Destroy();
-                    player.PlayerObesity(1);
+                    player.blob.AddMass(1);
                     j--;
                 }
             }
         }
     }
 
-    public void CreatePlayers(IInput input)
+    public Player CreatePlayers(IInput input)
     {
-        bool isPlayerControlled = this.input.IsPlayerControlled(input);
-        Player player = new Player(new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight)), input, isPlayerControlled);
+        bool isPlayerControlled = input is MouseInput;
+        Player player = new Player(new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight)), input,!isPlayerControlled);
         engine.RegisterActor(player, player);
         players.Add(player);
-        if (isPlayerControlled)
-        {
-            mainPlayer = player;
-        }
+        return player;
     }
 
     public void SpawningPlayers()
     {
-        CreatePlayers(input.GetMouseInput());
+        Player player1 = CreatePlayers(new MouseInput(camera, Window));
+        player1.input.SetControllerPlayer(player1);
 
         for (int i = 0; i < config.MaxNumberOfPlayers; i++)
         {
-            CreatePlayers(input.GetBotMovement());
+            Player player = CreatePlayers(new BotMovement(new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight))));
+            player.input.SetControllerPlayer(player);
         }
+    }
+
+    public Player GetRandomPlayer()
+    {
+        return players[random.Next(0, players.Count)];
+    }
+
+    public void SetmainPlayer(Player newPlayer)
+    {
+        mainPlayer = newPlayer;
+    }
+    
+    private void Draw(Drawable drawable)
+    {
+        Window.Draw(drawable);
+    }
+    
+    public void DrawLine(Vector2f start, Vector2f end, Color color)
+    {
+        VertexArray line = new VertexArray(PrimitiveType.Lines, 2);
+        line[0] = new Vertex(start, color);
+        line[1] = new Vertex(end, color);
+
+        Draw(line);
+    }
+    
+    public void KillPlayer(Player player)
+    {
+        engine.KillPlayer(player);
     }
 }

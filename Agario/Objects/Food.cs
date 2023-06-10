@@ -9,7 +9,7 @@ namespace Agario
     {
         public CircleShape shape;
         private static int radius = 5;
-        RandomColour randomColour= new RandomColour();
+        private RandomColour randomColour = new RandomColour();
 
         public Food(Vector2f position)
         {
@@ -23,7 +23,7 @@ namespace Agario
         
         public void Destroy()
         {
-             Game.foodItems.Remove(this);
+            Game.Instance.foodItems.Remove(this);
         }
     }
 }

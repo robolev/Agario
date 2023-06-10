@@ -9,32 +9,28 @@ namespace Agario
 {
     public class Player : IPlayer,BaseObject
     {
-        public int Radius { get; private set; } = 10;
-        public CircleShape circle { get; set; }
-
-        private Vector2f velocity;
-
-        private IInput input; 
-        Input Input = new();
-
+        public Blob blob {get; set; }
+        
         public bool bot = true;
         public bool IsPlayer = false;
-
-        RandomColour randomColour = new RandomColour();
-        Random random = new Random();
+        
+        public IInput input; 
+        public Input Input = new();
 
         public KeyBinding keyBinding;
-
-
+        
+        public static Player LocalPlayer;
 
         public Player(Vector2f position, IInput input, bool bot = true)
         {
-            circle = CircleHelper.CreateCircle(Radius, new Vector2f(0, 0), position, randomColour.GetRandomColor());
+            blob = new Blob(position);
             this.input = input;
+           
             if (!bot)
             {
                 IsPlayer = true;
                 this.IsPlayer = this.input is MouseInput;
+                LocalPlayer = this;
             }
             else
             {
@@ -42,20 +38,62 @@ namespace Agario
             }
 
             keyBinding = new KeyBinding();
-            keyBinding.BindAction("SoulSwap", new List<Keyboard.Key> { Keyboard.Key.F });           
+            keyBinding.BindAction("SoulSwap", new List<Keyboard.Key> { Keyboard.Key.F });
         }
 
         public void UpdateMovement(float speed)
         {
-            Vector2f direction = input.UpdateMovement();
+            Vector2f position = input.UpdateMovement();
+            ClampMovement(ref position);
+            
+            Game.Instance.DrawLine(blob.circle.Position, position, Color.Red);
+
+            Vector2f direction = position - blob.circle.Position;
             direction = NormalizeVector(direction);
-            velocity = direction * speed;
+            blob.velocity = direction * speed;
+            
         }
 
+        private void ClampMovement(ref Vector2f position)
+        {
+            if (position.X < blob.circle.Radius)
+                position.X = blob.circle.Radius;
+            else if (position.X > Config.MapWidth - blob.circle.Radius)
+                position.X = Config.MapWidth - blob.circle.Radius;
+
+            if (position.Y < blob.circle.Radius)
+                position.Y = blob.circle.Radius;
+            else if (position.Y > Config.MapWidth - blob.circle.Radius)
+                position.Y = Config.MapWidth - blob.circle.Radius;
+        }
+        
         public void Update(float deltaTime)
         {
+            if (this != LocalPlayer)
+            {
+                this.blob.circle.OutlineThickness = 3;
+    
+                if (this.blob.circle.Radius > LocalPlayer.blob.Radius)
+                {
+                    this.blob.circle.OutlineColor = Color.Red;
+                }
+                else if (blob.circle.Radius < LocalPlayer.blob.Radius)
+                {
+                    this.blob.circle.OutlineColor = Color.Green;
+                }
+                else
+                {
+                    this.blob.circle.OutlineColor = Color.Blue;
+                }
+            }
+            else 
+            {
+                LocalPlayer.blob.circle.OutlineColor = Color.White;
+                LocalPlayer.blob.circle.OutlineThickness = 3;
+            }
+        
             UpdateMovement(Config.speed);
-            circle.Position += velocity * deltaTime;
+            blob.circle.Position += blob.velocity * deltaTime;
             ProcessEvents();
         }
 
@@ -72,34 +110,20 @@ namespace Agario
 
         public void Draw(RenderTarget target)
         {
-            target.Draw(circle);
+            target.Draw(blob.circle);
         }
-
-        public void PlayerObesity(float mass)
-        {
-            if (circle.Radius >= Config.MaxRadius)
-                return;
-
-            circle.Radius += mass;
-            circle.Origin = new Vector2f(circle.Radius, circle.Radius);
-        }
-
+        
         public void SoulSwap()
         {
             Player oldplayer = this;
-            Player newPlayer = Game.players[random.Next(0, Game.players.Count)];
+            Player newPlayer = Game.Instance.GetRandomPlayer();
 
             while (newPlayer == oldplayer)
             {
-                newPlayer = Game.players[random.Next(0, Game.players.Count)];
+                newPlayer = Game.Instance.GetRandomPlayer();
             }
 
-            oldplayer.bot = true;
-            newPlayer.bot = false;
-
-            oldplayer.input = new BotMovement(oldplayer.velocity);
-            newPlayer.input = new MouseInput(Game.camera, Game.Window);
-            Game.mainPlayer = newPlayer;
+            (oldplayer.blob, newPlayer.blob) = (newPlayer.blob, oldplayer.blob);
         }
 
         public void ProcessEvents()
@@ -112,7 +136,19 @@ namespace Agario
 
         public void Destroy()
         {
-            Game.players.Remove(this);
+            Game.Instance.players.Remove(this);
         }
+        
+        public bool CanEat(Player player)
+        {
+            return blob.circle.Radius > player.blob.circle.Radius;
+        }
+        
+        public void EatPlayer(Player player)
+        {
+            blob.AddMass(player.blob.circle.Radius);
+            Game.Instance.KillPlayer(player);
+        }
+        
     }
 }

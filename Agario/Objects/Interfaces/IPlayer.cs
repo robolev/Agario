@@ -6,6 +6,6 @@ namespace Agario
 {
     public interface IPlayer : IDrawable, IUpdatable
     {
-        CircleShape circle { get; }
+        public Blob blob { get; set; }
     }
 }

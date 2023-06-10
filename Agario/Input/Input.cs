@@ -26,7 +26,6 @@ namespace Agario.Agario.Input
         public bool IsPlayerControlled(IInput input)
         {
             return input is MouseInput;
-
         }
 
         public BotMovement GetBotMovement()

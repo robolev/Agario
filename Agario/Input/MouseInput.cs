@@ -11,6 +11,7 @@ namespace Agario
         public Camera camera;
         private RenderWindow window;
         private MathHelper mathHelper = new();
+        private Player controllerPlayer;
 
         public MouseInput(Camera camera, RenderWindow window)
         {
@@ -18,6 +19,11 @@ namespace Agario
             this.window = window;
 
             window.MouseMoved += Window_MouseMoved;
+        }
+        
+        public void SetControllerPlayer(Player player)
+        {
+            controllerPlayer = player;
         }
 
         private void Window_MouseMoved(object? sender, MouseMoveEventArgs e)
@@ -36,7 +42,7 @@ namespace Agario
             Vector2f targetPosition = camera.view.Center;
             Vector2f mousePositionInView = window.MapPixelToCoords(mousePosition);
             Vector2f direction = mousePositionInView - targetPosition;
-            return mathHelper.NormalizeVector(direction);
+            return mousePositionInView;
         }
     }
 }

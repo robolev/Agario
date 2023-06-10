@@ -6,5 +6,6 @@ namespace Agario
     public interface IInput
     {
         public Vector2f UpdateMovement();
+        public void SetControllerPlayer(Player player);
     }
 }

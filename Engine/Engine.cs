@@ -2,6 +2,7 @@
 using SFML.System;
 using SFML.Window;
 using Agario.Heart.Game;
+using System.Numerics;
 
 
 namespace Agario
@@ -13,6 +14,7 @@ namespace Agario
 
         public RenderWindow window;
         public Game game;
+        Player player;
 
         public Engine()
         {
@@ -31,6 +33,8 @@ namespace Agario
                 float deltaTime = clock.Restart().AsSeconds();
 
                 window.DispatchEvents();
+
+                player.ProcessEvents();
 
                 Update(deltaTime);
 
@@ -58,7 +62,7 @@ namespace Agario
             }
         }
 
-        public void ExplelPlayer(Player player)
+        public void KillPlayer(Player player)
         {
             player.Destroy();
             drawables.Remove(player);
@@ -82,7 +86,7 @@ namespace Agario
                 drawable.Draw(window);
             }
 
-            window.SetView(Game.camera.view);
+            window.SetView(game.camera.view);
 
             window.Display();
         }

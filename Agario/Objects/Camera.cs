@@ -14,9 +14,9 @@ namespace Agario
             view = new View(target.DefaultView);
         }
 
-        public void Follow(Player player)
+        public void Follow()
         {
-            view.Center = player.circle.Position;
+            view.Center = Player.LocalPlayer.blob.circle.Position;
         }
 
     }
