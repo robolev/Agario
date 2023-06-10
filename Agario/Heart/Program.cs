@@ -1,4 +1,4 @@
-﻿using Agario.Agario.Heart;
+﻿using Agario.Heart;
 using Microsoft.VisualBasic;
 using SFML.Graphics;
 using SFML.System;

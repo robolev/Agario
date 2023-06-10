@@ -14,7 +14,6 @@ namespace Agario
 
         public RenderWindow window;
         public Game game;
-        Player player;
 
         public Engine()
         {
@@ -33,8 +32,6 @@ namespace Agario
                 float deltaTime = clock.Restart().AsSeconds();
 
                 window.DispatchEvents();
-
-                player.ProcessEvents();
 
                 Update(deltaTime);
 

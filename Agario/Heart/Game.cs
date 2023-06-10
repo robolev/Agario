@@ -1,5 +1,5 @@
 ﻿using Agario;
-using Agario.Agario.Heart;
+using Agario.Heart;
 using Agario.Agario.Input;
 using SFML.Graphics;
 using SFML.System;
@@ -37,11 +37,8 @@ public class Game
         input.InitializeMouseInput(camera, window);
 
         config = new Config();
-
-        FileReader fileReader = new FileReader(config);
-        fileReader.LoadInformationFromFile();       
-
-        Console.WriteLine(config.MaxNumberOfPlayers);
+        config.LoadInformationFromFile();       
+        
         Instance = this;
     }
 
