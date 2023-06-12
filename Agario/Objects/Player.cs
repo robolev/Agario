@@ -46,7 +46,6 @@ namespace Agario
             Vector2f position = input.UpdateMovement();
             ClampMovement(ref position);
             
-            Game.Instance.DrawLine(blob.circle.Position, position, Color.Red);
 
             Vector2f direction = position - blob.circle.Position;
             direction = NormalizeVector(direction);
@@ -94,7 +93,6 @@ namespace Agario
         
             UpdateMovement(Config.speed);
             blob.circle.Position += blob.velocity * deltaTime;
-            ProcessEvents();
         }
 
         private Vector2f NormalizeVector(Vector2f vector)

@@ -1,4 +1,5 @@
 ﻿using Agario.Heart;
+using Agario.Heart.Game;
 using Microsoft.VisualBasic;
 using SFML.Graphics;
 using SFML.System;
@@ -10,8 +11,8 @@ namespace Agario
     {
         static void Main(string[] args)
         {
-            Engine engine = new Engine();
-            engine.Run();
+            Game game = new Game();
+            game.Run();
         }
     }
 }

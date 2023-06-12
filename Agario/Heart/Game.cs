@@ -1,23 +1,25 @@
 ﻿using Agario;
 using Agario.Heart;
 using Agario.Agario.Input;
+using Agario.Agario.Objects.Interfaces;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
 namespace Agario.Heart.Game;
 
-public class Game
+public class Game:GameCore
 {
     private Random random = new Random();
 
-    public  Camera camera;
-    public  RenderWindow Window;
+    public  View camera;
+    
+    public RenderWindow Window { get; private set; }
 
     public  List<Player> players = new List<Player>();
     public  List<Food> foodItems = new List<Food>();
 
-    private Engine engine;
+    private Engine.Engine engine;
     private CollisionCheck collision = new CollisionCheck();
 
     public  Player mainPlayer;
@@ -25,34 +27,48 @@ public class Game
 
     public Config config;
     
+    
     public static Game Instance { get; private set; }
 
-    public Game(RenderWindow window, Engine engine)
+    public Game()
     {
-        this.engine = engine;
-        Window = engine.window;
-        camera = new Camera(window);
-        input = new Input();
-
-        input.InitializeMouseInput(camera, window);
-
-        config = new Config();
-        config.LoadInformationFromFile();       
+        camera = new View(new FloatRect(0f, 0f, Config.WindowWidth, Config.WindowHeight));
         
         Instance = this;
     }
 
-    public void SetCamera()
+    public override void Initialize()
     {
-        camera.Follow();
+        input = new Input();
+        config = new Config();
+        config.LoadInformationFromFile();   
+        SpawningPlayers();
     }
 
+    protected override void OnFrameStart()
+    {
+        Engine.window.SetView(camera);
+        Player.LocalPlayer.ProcessEvents();
+    }
+
+    protected override void OnFrameEnd()
+    {
+        SpawnFood();
+        UpdateCamera();
+        CheckingPlayersCollision();
+        CheckCollisionWithFood();
+    }
+    
     public void SpawnFood()
     {
         Vector2f position = new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight));
         Food food = new Food(position);
-        engine.RegisterActor(food);
+        Engine.RegisterActor(food);
         foodItems.Add(food);
+    }
+    protected override void OnWindowClosed(object sender, EventArgs args)
+    {
+        base.OnWindowClosed(sender, args);
     }
 
     public void CheckingPlayersCollision()
@@ -93,7 +109,7 @@ public class Game
 
                 if (collision.CheckCollision(player.blob.circle, food.shape))
                 {
-                    engine.drawables.Remove(food);
+                    Engine.drawables.Remove(food);
                     food.Destroy();
                     player.blob.AddMass(1);
                     j--;
@@ -106,14 +122,14 @@ public class Game
     {
         bool isPlayerControlled = input is MouseInput;
         Player player = new Player(new Vector2f(random.Next(0, (int)Config.MapWidth), random.Next(0, (int)Config.MapHeight)), input,!isPlayerControlled);
-        engine.RegisterActor(player, player);
+        Engine.RegisterActor(player, player);
         players.Add(player);
         return player;
     }
 
     public void SpawningPlayers()
     {
-        Player player1 = CreatePlayers(new MouseInput(camera, Window));
+        Player player1 = CreatePlayers(new MouseInput(camera, Engine.window));
         player1.input.SetControllerPlayer(player1);
 
         for (int i = 0; i < config.MaxNumberOfPlayers; i++)
@@ -127,28 +143,16 @@ public class Game
     {
         return players[random.Next(0, players.Count)];
     }
+    
 
-    public void SetmainPlayer(Player newPlayer)
-    {
-        mainPlayer = newPlayer;
-    }
-    
-    private void Draw(Drawable drawable)
-    {
-        Window.Draw(drawable);
-    }
-    
-    public void DrawLine(Vector2f start, Vector2f end, Color color)
-    {
-        VertexArray line = new VertexArray(PrimitiveType.Lines, 2);
-        line[0] = new Vertex(start, color);
-        line[1] = new Vertex(end, color);
-
-        Draw(line);
-    }
-    
     public void KillPlayer(Player player)
     {
-        engine.KillPlayer(player);
+        Engine.KillPlayer(player);
+    }
+
+    public void UpdateCamera()
+    {
+        camera.Center = Player.LocalPlayer.blob.circle.Position;
+
     }
 }

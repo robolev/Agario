@@ -15,6 +15,8 @@ public class Config
     public int MaxNumberOfPlayers { get; set; } = 100;
 
     public const float speed = 100;
+
+    public static uint FrameRateLimit = 120;
     
     
     public void LoadInformationFromFile()

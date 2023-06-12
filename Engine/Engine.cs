@@ -3,9 +3,10 @@ using SFML.System;
 using SFML.Window;
 using Agario.Heart.Game;
 using System.Numerics;
+using Agario;
 
 
-namespace Agario
+namespace Engine
 {
     public class Engine
     {
@@ -14,13 +15,14 @@ namespace Agario
 
         public RenderWindow window;
         public Game game;
+        
+        public Action OnFrameStart;
+        public Action OnFrameEnd;
 
         public Engine()
         {
             window = new RenderWindow(new VideoMode(Config.WindowWidth, Config.WindowHeight), "Moving Circle", Styles.Default, new ContextSettings { AntialiasingLevel = 8 });
-            game = new Game(window,this);
-            game.SpawningPlayers();
-            window.Closed += (sender, e) => window.Close();
+            window.SetFramerateLimit(Config.FrameRateLimit);
         }
 
         public void Run()
@@ -33,16 +35,15 @@ namespace Agario
 
                 window.DispatchEvents();
 
+                OnFrameStart.Invoke();
+                
                 Update(deltaTime);
-
-                game.SpawnFood();
-
-                game.CheckingPlayersCollision();
-                game.CheckCollisionWithFood();
-
-                game.SetCamera();
-
+                
                 Render();
+                
+                OnFrameEnd.Invoke();
+                
+                window.Display();
             }
         }
 
@@ -51,7 +52,7 @@ namespace Agario
             if (drawable != null && !drawables.Contains(drawable))
             {
                 drawables.Add(drawable);
-            }
+            } 
 
             if (updatable != null && !updatables.Contains(updatable))
             {
@@ -82,10 +83,6 @@ namespace Agario
             {
                 drawable.Draw(window);
             }
-
-            window.SetView(game.camera.view);
-
-            window.Display();
         }
     }
 }
