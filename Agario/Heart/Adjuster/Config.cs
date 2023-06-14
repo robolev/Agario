@@ -21,7 +21,7 @@ public class Config
     
     public void LoadInformationFromFile()
     {
-        string filePath = "Config.txt";
+        string filePath = "bin/Debug/net6.0/Config.txt";
 
         if (!File.Exists(filePath))
         {

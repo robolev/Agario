@@ -3,13 +3,19 @@ using SFML.System;
 using Agario.Heart.Game;
 using SFML.Window;
 using Agario.Agario.Input;
+using Agario.Agario.Objects.BaseObject;
 using Agario.Agario.Objects.Interfaces;
+using Agario.AnimatedCircle;
+using Engine;
+
 
 namespace Agario
 {
-    public class Player : IPlayer,BaseObject
+    public class Player : BaseObject,IPlayer
     {
         public Blob blob {get; set; }
+
+        public int ZIndex { get; set; } = 2;
         
         public bool bot = true;
         public bool IsPlayer = false;
@@ -20,6 +26,8 @@ namespace Agario
         public KeyBinding keyBinding;
         
         public static Player LocalPlayer;
+        
+        private AnimatedCircle.AnimatedCircle animation;
 
         public Player(Vector2f position, IInput input, bool bot = true)
         {
@@ -36,9 +44,15 @@ namespace Agario
             {
                 this.bot = this.input is BotMovement;          
             }
-
+            
+            Texture spriteSheet = new Texture("AnimationSheet/DuckSheet.png"); 
+            int frameSize = 167;
+            int frameCount = (int)(spriteSheet.Size.X / frameSize);
+             
+            animation = new AnimatedCircle.AnimatedCircle(blob.circle,spriteSheet, spriteSheet.ToSpriteSheet(frameSize,frameCount), 0.5f); 
             keyBinding = new KeyBinding();
             keyBinding.BindAction("SoulSwap", new List<Keyboard.Key> { Keyboard.Key.F });
+            keyBinding.BindAction("Colour", new List<Keyboard.Key> { Keyboard.Key.J });
         }
 
         public void UpdateMovement(float speed)
@@ -72,11 +86,11 @@ namespace Agario
             {
                 this.blob.circle.OutlineThickness = 3;
     
-                if (this.blob.circle.Radius > LocalPlayer.blob.Radius)
+                if (this.CanEat(LocalPlayer))
                 {
                     this.blob.circle.OutlineColor = Color.Red;
                 }
-                else if (blob.circle.Radius < LocalPlayer.blob.Radius)
+                else if (!this.CanEat(LocalPlayer))
                 {
                     this.blob.circle.OutlineColor = Color.Green;
                 }
@@ -90,7 +104,8 @@ namespace Agario
                 LocalPlayer.blob.circle.OutlineColor = Color.White;
                 LocalPlayer.blob.circle.OutlineThickness = 3;
             }
-        
+            
+            animation.Update(deltaTime);
             UpdateMovement(Config.speed);
             blob.circle.Position += blob.velocity * deltaTime;
         }
@@ -108,9 +123,11 @@ namespace Agario
 
         public void Draw(RenderTarget target)
         {
-            target.Draw(blob.circle);
+            animation.Draw(target);
         }
-        
+
+    
+
         public void SoulSwap()
         {
             Player oldplayer = this;
@@ -130,13 +147,28 @@ namespace Agario
             {
                 SoulSwap();
             }
+
+            if (Input.EventPressed("Colour",this))
+            {
+                blob.circle.FillColor = new RandomColour().GetRandomColor();
+            }
         }
 
-        public void Destroy()
+        public new void Destroy()
         {
+            if (this == LocalPlayer)
+            {
+                Player player1 = Game.Instance.CreatePlayers(new MouseInput(Game.Instance.camera, Game.Instance.GetEngine().window));
+                player1.input.SetControllerPlayer(player1);
+                LocalPlayer = player1;
+                Console.WriteLine("You die");
+                return;
+            }
+
             Game.Instance.players.Remove(this);
+            base.Destroy();
         }
-        
+
         public bool CanEat(Player player)
         {
             return blob.circle.Radius > player.blob.circle.Radius;
@@ -145,7 +177,7 @@ namespace Agario
         public void EatPlayer(Player player)
         {
             blob.AddMass(player.blob.circle.Radius);
-            Game.Instance.KillPlayer(player);
+            player.Destroy();
         }
         
     }

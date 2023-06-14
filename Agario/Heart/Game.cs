@@ -19,7 +19,7 @@ public class Game:GameCore
     public  List<Player> players = new List<Player>();
     public  List<Food> foodItems = new List<Food>();
 
-    private Engine.Engine engine;
+    public Engine.Engine engine;
     private CollisionCheck collision = new CollisionCheck();
 
     public  Player mainPlayer;
@@ -144,12 +144,7 @@ public class Game:GameCore
         return players[random.Next(0, players.Count)];
     }
     
-
-    public void KillPlayer(Player player)
-    {
-        Engine.KillPlayer(player);
-    }
-
+    
     public void UpdateCamera()
     {
         camera.Center = Player.LocalPlayer.blob.circle.Position;

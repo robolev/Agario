@@ -7,7 +7,7 @@ public class Blob
 {   
     public CircleShape circle { get; set; }
     
-    public int Radius { get; private set; } = 10;
+    public int Radius { get; set; } = 10;
     
     public Vector2f velocity;
     

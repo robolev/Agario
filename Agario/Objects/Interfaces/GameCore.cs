@@ -41,6 +41,10 @@ public abstract class GameCore
         Window window = (Window) sender;
         window.Close();
     }
-    
-    
+
+    public  Engine.Engine GetEngine()
+    {
+	    
+	    return Engine;
+    }
 }

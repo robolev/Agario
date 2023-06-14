@@ -32,7 +32,7 @@ namespace Engine
             while (window.IsOpen)
             {
                 float deltaTime = clock.Restart().AsSeconds();
-
+           
                 window.DispatchEvents();
 
                 OnFrameStart.Invoke();
@@ -59,13 +59,7 @@ namespace Engine
                 updatables.Add(updatable);
             }
         }
-
-        public void KillPlayer(Player player)
-        {
-            player.Destroy();
-            drawables.Remove(player);
-            updatables.Remove(player);
-        }
+        
 
         public void Update(float deltaTime)
         {
@@ -78,11 +72,13 @@ namespace Engine
         public void Render()
         {
             window.Clear(Color.Black);
-
+            drawables.Sort((drawable, drawable1) => drawable.ZIndex.CompareTo(drawable1.ZIndex));
+            
             foreach (var drawable in drawables)
             {
                 drawable.Draw(window);
             }
+            
         }
     }
 }
