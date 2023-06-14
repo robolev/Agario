@@ -45,7 +45,7 @@ namespace Agario
                 this.bot = this.input is BotMovement;          
             }
             
-            Texture spriteSheet = new Texture("AnimationSheet/DuckSheet.png"); 
+            Texture spriteSheet =  LoadRandomSpriteSheet("AnimationSheet"); 
             int frameSize = 167;
             int frameCount = (int)(spriteSheet.Size.X / frameSize);
              
@@ -179,6 +179,19 @@ namespace Agario
             blob.AddMass(player.blob.circle.Radius);
             player.Destroy();
         }
-        
+        private Texture LoadRandomSpriteSheet(string directoryPath)
+        {
+            string[] spriteFiles = Directory.GetFiles(directoryPath, "*.png");
+            if (spriteFiles.Length == 0)
+            {
+                throw new Exception("No sprite sheets found in the specified directory.");
+            }
+
+            Random random = new Random();
+            string randomSpriteFile = spriteFiles[random.Next(0, spriteFiles.Length)];
+
+            Texture spriteSheet = new Texture(randomSpriteFile);
+            return spriteSheet;
+        }
     }
 }
