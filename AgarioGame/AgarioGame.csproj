@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Robert.Engine" Version="1.0.0" />
       <PackageReference Include="SFML.Net" Version="2.5.0" />
     </ItemGroup>
 
@@ -32,6 +33,12 @@
       <EmbeddedResource Include="AnimationSheet\Something.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Engine">
+        <HintPath>..\Engine\bin\Debug\net7.0\Engine.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

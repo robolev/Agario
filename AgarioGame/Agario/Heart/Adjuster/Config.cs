@@ -39,6 +39,11 @@ public static class Config
         {
             string[] parts = line.Split(':');
 
+            if (parts.Length != 2)
+            {
+               continue;
+            }
+
             string key = parts[0].Trim();
             string value = parts[1].Trim();
 
