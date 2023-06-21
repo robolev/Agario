@@ -45,11 +45,11 @@ namespace Agario
                 this.bot = this.input is BotMovement;          
             }
             
-            Texture spriteSheet =  LoadRandomSpriteSheet("AnimationSheet"); 
-            int frameSize = 167;
-            int frameCount = (int)(spriteSheet.Size.X / frameSize);
+         //   Texture spriteSheet =  LoadRandomSpriteSheet("AnimationSheet"); 
+         //   int frameSize = 167;
+           // int frameCount = (int)(spriteSheet.Size.X / frameSize);
              
-            animation = new AnimatedCircle.AnimatedCircle(blob.circle,spriteSheet, spriteSheet.ToSpriteSheet(frameSize,frameCount), 0.5f); 
+       //     animation = new AnimatedCircle.AnimatedCircle(blob.circle,spriteSheet, spriteSheet.ToSpriteSheet(frameSize,frameCount), 0.5f); 
             keyBinding = new KeyBinding();
             keyBinding.BindAction("SoulSwap", new List<Keyboard.Key> { Keyboard.Key.F });
             keyBinding.BindAction("Colour", new List<Keyboard.Key> { Keyboard.Key.J });
@@ -105,7 +105,8 @@ namespace Agario
                 LocalPlayer.blob.circle.OutlineThickness = 3;
             }
             
-            animation.Update(deltaTime);
+            //animation.Update(deltaTime);
+            blob.UpdateAnimatioun(deltaTime);
             UpdateMovement(Config.speed);
             blob.circle.Position += blob.velocity * deltaTime;
         }
@@ -123,7 +124,7 @@ namespace Agario
 
         public void Draw(RenderTarget target)
         {
-            animation.Draw(target);
+            blob.animation.Draw(target);
         }
 
     
@@ -179,7 +180,8 @@ namespace Agario
             blob.AddMass(player.blob.circle.Radius);
             player.Destroy();
         }
-        private Texture LoadRandomSpriteSheet(string directoryPath)
+
+        public Texture LoadRandomSpriteSheet(string directoryPath)
         {
             string path  = Path.Combine(Directory.GetCurrentDirectory(), directoryPath);
             
