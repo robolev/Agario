@@ -1,6 +1,7 @@
 ﻿using Agario.Agario.Input;
 using Agario.Agario.Objects.Interfaces;
 using Engine.Config;
+using Engine.Sound;
 using SFML.Graphics;
 using SFML.System;
 
@@ -109,6 +110,10 @@ public class Game:GameCore
                     Engine.drawables.Remove(food);
                     food.Destroy();
                     player.blob.AddMass(1);
+                    if (Player.LocalPlayer == player)
+                    {
+                        SoundPlayer.PlayAudioClip("BubbleGum");
+                    }
                     j--;
                 }
             }

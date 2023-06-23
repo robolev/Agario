@@ -33,12 +33,28 @@
       <EmbeddedResource Include="AnimationSheet\Something.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+      <None Remove="Sounds\pop.ogg" />
+      <EmbeddedResource Include="Sounds\pop.ogg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Sounds\nomnomnom.ogg" />
+      <EmbeddedResource Include="Sounds\nomnomnom.ogg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Sounds\BubbleGum.ogg" />
+      <EmbeddedResource Include="Sounds\BubbleGum.ogg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
       <Reference Include="Engine">
         <HintPath>..\Engine\bin\Debug\net7.0\Engine.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Sounds\" />
     </ItemGroup>
 
 </Project>

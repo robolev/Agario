@@ -1,4 +1,5 @@
 ﻿using Engine;
+using Engine.Sound;
 using SFML.Graphics;
 using SFML.System;
 
@@ -11,6 +12,7 @@ public class Blob
     public int Radius { get; set; } = 10;
     
     public AnimatedCircle.AnimatedCircle animation;
+    private LoadSpriteSheet loadSpriteSheet = new();
     
     public Vector2f velocity;
     
@@ -19,7 +21,7 @@ public class Blob
     public Blob(Vector2f position)
     {
         circle = CircleHelper.CreateCircle(Radius, new Vector2f(0, 0), position, randomColour.GetRandomColor());
-        Texture spriteSheet =  LoadRandomSpriteSheet("AnimationSheet"); 
+        Texture spriteSheet =  loadSpriteSheet.LoadRandomSpriteSheet("AnimationSheet"); 
         int frameSize = 167;
         int frameCount = (int)(spriteSheet.Size.X / frameSize);
         animation = new AnimatedCircle.AnimatedCircle(circle, spriteSheet, spriteSheet.ToSpriteSheet(frameSize, frameCount), 0.5f);
@@ -34,25 +36,15 @@ public class Blob
         circle.Origin = new Vector2f(circle.Radius, circle.Radius);
     }
     
-    public Texture LoadRandomSpriteSheet(string directoryPath)
-    {
-        string path  = Path.Combine(Directory.GetCurrentDirectory(), directoryPath);
-            
-        string[] spriteFiles = Directory.GetFiles(path, "*.png");
-        if (spriteFiles.Length == 0)
-        {
-            throw new Exception("No sprite sheets found in the specified directory.");
-        }
-
-        Random random = new Random();
-        string randomSpriteFile = spriteFiles[random.Next(0, spriteFiles.Length)];
-
-        Texture spriteSheet = new Texture(randomSpriteFile);
-        return spriteSheet;
-    }
 
     public void UpdateAnimatioun(float deltaTime)
     {
         animation.Update(deltaTime);
+    }
+
+    public void Draw(RenderTarget target)
+    {
+       animation.Draw(target);
+        
     }
 }

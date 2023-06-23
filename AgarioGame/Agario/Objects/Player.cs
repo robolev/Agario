@@ -7,6 +7,7 @@ using Agario.Agario.Objects.BaseObject;
 using Agario.Agario.Objects.Interfaces;
 using Agario.AnimatedCircle;
 using Engine;
+using Engine.Sound;
 
 
 namespace Agario
@@ -105,7 +106,6 @@ namespace Agario
                 LocalPlayer.blob.circle.OutlineThickness = 3;
             }
             
-            //animation.Update(deltaTime);
             blob.UpdateAnimatioun(deltaTime);
             UpdateMovement(Config.speed);
             blob.circle.Position += blob.velocity * deltaTime;
@@ -124,7 +124,7 @@ namespace Agario
 
         public void Draw(RenderTarget target)
         {
-            blob.animation.Draw(target);
+            blob.Draw(target);
         }
 
     
@@ -147,6 +147,7 @@ namespace Agario
             if (Input.EventPressed("SoulSwap",this))
             {
                 SoulSwap();
+                SoundPlayer.PlayAudioClip("pop");
             }
 
             if (Input.EventPressed("Colour",this))
@@ -180,22 +181,6 @@ namespace Agario
             blob.AddMass(player.blob.circle.Radius);
             player.Destroy();
         }
-
-        public Texture LoadRandomSpriteSheet(string directoryPath)
-        {
-            string path  = Path.Combine(Directory.GetCurrentDirectory(), directoryPath);
-            
-            string[] spriteFiles = Directory.GetFiles(path, "*.png");
-            if (spriteFiles.Length == 0)
-            {
-                throw new Exception("No sprite sheets found in the specified directory.");
-            }
-
-            Random random = new Random();
-            string randomSpriteFile = spriteFiles[random.Next(0, spriteFiles.Length)];
-
-            Texture spriteSheet = new Texture(randomSpriteFile);
-            return spriteSheet;
-        }
+        
     }
 }
