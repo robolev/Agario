@@ -33,6 +33,8 @@ public class Game:GameCore
         camera = new View(new FloatRect(0f, 0f, EngineConfig.WindowWidth, EngineConfig.WindowHeight));
         
         Instance = this;
+        
+        SoundPlayer.PlayAudioClip("jazzpiano",true);
     }
 
     public override void Initialize()

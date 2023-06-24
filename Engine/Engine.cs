@@ -43,6 +43,8 @@ namespace Engine
             soundPlayer.LoadAudioClips();
             soundPlayer.SetVolume(20f);
             
+            SoundPlayer.PlayAudioClip("jazzpiano",true);
+            
             while (window.IsOpen)
             {
                 float deltaTime = clock.Restart().AsSeconds();

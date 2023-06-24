@@ -45,6 +45,10 @@
       <EmbeddedResource Include="Sounds\BubbleGum.ogg">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+      <None Remove="Sounds\jazzpiano.ogg" />
+      <EmbeddedResource Include="Sounds\jazzpiano.ogg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
