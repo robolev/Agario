@@ -87,6 +87,10 @@ public class Game:GameCore
                     else
                     {
                         victim.EatPlayer(attacker);
+                        if (Player.LocalPlayer == victim)
+                        {
+                            SoundPlayer.PlayAudioClip("nomnomnom");
+                        }
                         break;
                     }
                 }

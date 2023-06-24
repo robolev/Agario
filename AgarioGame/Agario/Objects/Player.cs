@@ -179,6 +179,10 @@ namespace Agario
         public void EatPlayer(Player player)
         {
             blob.AddMass(player.blob.circle.Radius);
+            if (LocalPlayer == player)
+            {
+                SoundPlayer.PlayAudioClip("nomnomnom");
+            }
             player.Destroy();
         }
         
