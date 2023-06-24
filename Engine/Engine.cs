@@ -18,7 +18,7 @@ namespace Engine
         public Action OnFrameStart;
         public Action OnFrameEnd;
 
-        private SoundPlayer soundPlayer = new();
+        public SoundPlayer soundPlayer = new();
         
         public static Engine Instance { get; private set; }
 
@@ -32,19 +32,8 @@ namespace Engine
         public void Run()
         {
             Clock clock = new Clock();
-            string[] audioFiles = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory (), "Sounds"));
-            
-            audioFiles = audioFiles.Where(x => x.EndsWith(".wav") || x.EndsWith("ogg")).ToArray();
+           
 
-            foreach(string audioFile in audioFiles)
-            {
-                soundPlayer.AudioClipsList.Add(audioFile);
-            }
-            soundPlayer.LoadAudioClips();
-            soundPlayer.SetVolume(20f);
-            
-            SoundPlayer.PlayAudioClip("jazzpiano",true);
-            
             while (window.IsOpen)
             {
                 float deltaTime = clock.Restart().AsSeconds();

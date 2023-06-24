@@ -33,14 +33,25 @@ public class Game:GameCore
         camera = new View(new FloatRect(0f, 0f, EngineConfig.WindowWidth, EngineConfig.WindowHeight));
         
         Instance = this;
-        
-        SoundPlayer.PlayAudioClip("jazzpiano",true);
     }
 
     public override void Initialize()
     {
         input = new Input();
         SpawningPlayers();
+        string[] audioFiles = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory (), "Sounds"));
+            
+        audioFiles = audioFiles.Where(x => x.EndsWith(".wav") || x.EndsWith("ogg")).ToArray();
+
+        object soundPlayer;
+        foreach(string audioFile in audioFiles)
+        {
+            Engine.soundPlayer.AudioClipsList.Add(audioFile);
+        }
+        Engine.soundPlayer.LoadAudioClips();
+        Engine.soundPlayer.SetVolume(20f);
+        Thread thread = new Thread(() => SoundPlayer.PlayAudioClip("jazzpiano",true));
+        thread.Start();
     }
 
     protected override void OnFrameStart()
